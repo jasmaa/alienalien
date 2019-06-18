@@ -1,5 +1,5 @@
 # AlienAlien
-Chrome and Firefox extension that adds a UFOs to the browser
+Chrome and Firefox extension that adds UFOs to the browser
 
 ## Setup
   - Setting up for development:

@@ -41,12 +41,12 @@ class Alien {
 	}
 }
 
-const n = 6;
+const n = 3;
 let aliens = [];
 for(let i = 0; i < n; i++){
 	aliens.push(new Alien(
-		document.body.clientWidth * Math.random(),
-		document.body.clientHeight * Math.random(),
+		(document.body.clientWidth - 50) * Math.random(),
+		(document.body.clientHeight - 50) * Math.random(),
 		2*Math.PI * Math.random()
 	));
 }
@@ -55,4 +55,4 @@ setInterval(()=>{
 	for(let alien of aliens){
 		alien.update();
 	}
-}, 20);
+}, 10);
