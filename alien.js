@@ -1,32 +1,58 @@
 
-// Init alien
-let alienImg = new Image(50, 50);
-alienImg.src = browser.runtime.getURL("images/alien.gif");
-
-let x = 0;
-let y = 0;
-let deltaX = 1;
-let deltaY = 1;
-
-alienImg.style.display = '';
-alienImg.style.position = 'absolute';
-alienImg.style["z-index"] = 99999;
-
-
-document.body.appendChild(alienImg);
-
-setInterval(()=>{
-	x += deltaX;
-	y += deltaY;
-
-	if(x >= document.body.clientWidth || x <= 0){
-		deltaX *= -1;
-	}
-	if(y >= document.body.clientHeight || y <= 0){
-		deltaY *= -1;
+/**
+* Animatable alien
+*/
+class Alien {
+	
+	constructor(x, y, theta){
+		this.x = x;
+		this.y = y;
+		this.deltaX = Math.cos(theta);
+		this.deltaY = Math.sin(theta);
+		this.alienImg = new Image(50, 50);
+		
+		// Check whether Chrome or Firefox
+		const agent = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime) ? chrome : browser;
+		this.alienImg.src = agent.runtime.getURL("images/alien.gif");
+		
+		this.alienImg.style.display = '';
+		this.alienImg.style.top = y+"px";
+		this.alienImg.style.left = x+"px";
+		this.alienImg.style.position = 'absolute';
+		this.alienImg.style["z-index"] = 99999;
+		
+		document.body.appendChild(this.alienImg);
 	}
 	
-	// Update alien position
-	alienImg.style.top = y+"px";
-	alienImg.style.left = x+"px";
+	update(){
+		this.x += this.deltaX;
+		this.y += this.deltaY;
+
+		if(this.x >= document.body.clientWidth - 50 || this.x <= 0){
+			this.deltaX *= -1;
+		}
+		if(this.y >= document.body.clientHeight - 50 || this.y <= 0){
+			this.deltaY *= -1;
+		}
+		
+		// Update alien position
+		this.alienImg.style.top = this.y+"px";
+		this.alienImg.style.left = this.x+"px";
+	}
+}
+
+const n = 6;
+let aliens = [];
+for(let i = 0; i < n; i++){
+	aliens.push(new Alien(
+		document.body.clientWidth * Math.random(),
+		document.body.clientHeight * Math.random(),
+		2*Math.PI * Math.random()
+	));
+}
+	
+setInterval(()=>{
+	for(let alien of aliens){
+		alien.update();
+	}
 }, 20);
