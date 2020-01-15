@@ -1,5 +1,12 @@
 # AlienAlien
+[![Mozilla Add-on](https://img.shields.io/badge/mozilla%20add--on-v1.1-blue.svg)](https://addons.mozilla.org/en-US/firefox/addon/alienalien/)
+
 Chrome and Firefox extension that adds UFOs to the browser
+
+## Install
+AlienAlien can be installed as a Firefox extension
+
+  - [Firefox](https://addons.mozilla.org/en-US/firefox/addon/alienalien/)
 
 ## Setup
   - Setting up for development:
