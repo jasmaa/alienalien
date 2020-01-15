@@ -1,3 +1,5 @@
+// content.js
+// Content script
 
 /**
 * Animatable alien
@@ -62,21 +64,31 @@ const tearDown = () => {
 	}
 }
 
-// Clean up
+// Clean up old aliens
 document.querySelectorAll('.alienalien-alienImg').forEach(e => e.remove());
 
-setUp();
 setInterval(() => {
 	for (let alien of aliens) {
-		alien.update(document.getElementsByClassName('alienalien-alienImg'));
+		alien.update();
 	}
 }, 20);
 
-chrome.runtime.onMessage.addListener((request, sender) => {
-	if (request.message) {
-		setUp();
-	}
-	else {
-		tearDown();
+chrome.runtime.sendMessage({ type: 'init' })
+
+chrome.runtime.onMessage.addListener(({ type, message }, sender) => {
+	switch (type) {
+		case 'init':
+			if (message.aliensEnabled) {
+				setUp();
+			}
+			break;
+		case 'update':
+			if (message.aliensEnabled) {
+				setUp();
+			}
+			else {
+				tearDown();
+			}
+			break;
 	}
 });
