@@ -44,7 +44,7 @@ class Alien {
 	}
 }
 
-const n = 3;
+let n = 0;
 let aliens = [];
 
 const setUp = () => {
@@ -73,21 +73,38 @@ setInterval(() => {
 	}
 }, 20);
 
+// Query init state
 chrome.runtime.sendMessage({ type: 'init' })
 
 chrome.runtime.onMessage.addListener(({ type, message }, sender) => {
 	switch (type) {
 		case 'init':
 			if (message.aliensEnabled) {
+				n = message.aliensCount;
 				setUp();
 			}
 			break;
-		case 'update':
+		case 'toggle':
 			if (message.aliensEnabled) {
+				n = message.aliensCount;
 				setUp();
 			}
 			else {
 				tearDown();
+			}
+			break;
+		case 'inc':
+			if (message.aliensEnabled) {
+				aliens.push(new Alien(
+					(document.body.clientWidth - 50) * Math.random(),
+					(document.body.clientHeight - 50) * Math.random(),
+					2 * Math.PI * Math.random()
+				));
+			}
+			break;
+		case 'dec':
+			if (message.aliensEnabled) {
+				document.body.removeChild(aliens.pop().alienImg);
 			}
 			break;
 	}

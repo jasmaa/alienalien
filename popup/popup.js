@@ -8,16 +8,20 @@
 const setEnableButton = (enabled) => {
     if (enabled) {
         $('#alienToggle')
-            .removeClass('btn-outline-danger')
-            .addClass('btn-outline-success');
-        $('#alienToggle').html('Aliens On');
+            .removeClass('btn-danger')
+            .addClass('btn-success');
+        $('#alienToggle').html('On');
     }
     else {
         $('#alienToggle')
-            .removeClass('btn-outline-success')
-            .addClass('btn-outline-danger');
-        $('#alienToggle').html('Aliens Off');
+            .removeClass('btn-success')
+            .addClass('btn-danger');
+        $('#alienToggle').html('Off');
     }
+}
+
+const setCountButton = (count) => {
+    $('#aliensCount').html(count);
 }
 
 chrome.runtime.getBackgroundPage(
@@ -25,18 +29,56 @@ chrome.runtime.getBackgroundPage(
         // Set enabled
         let aliensEnabled = page.getAliensEnabled();
         setEnableButton(aliensEnabled);
+        let aliensCount = page.getAliensCount();
+        setCountButton(aliensCount);
 
-        $('#alienToggle').click(() => {
+        $('#incAliens').click(() => {
+            if(aliensCount >= 30){
+                return;
+            }
 
-            aliensEnabled = !aliensEnabled;
-            page.setAliensEnabled(aliensEnabled);
-            setEnableButton(aliensEnabled);
-
+            aliensCount++;
+            page.setAliensCount(aliensCount);
+            setCountButton(aliensCount);
+            
             chrome.tabs.query({}, (tabs) => {
                 for (const tab of tabs) {
                     chrome.tabs.sendMessage(tab.id, {
-                        type: 'update',
+                        type: 'inc',
                         message: { aliensEnabled: aliensEnabled },
+                    });
+                }
+            });
+        });
+        $('#decAliens').click(() => {
+            if(aliensCount <= 0){
+                return;
+            }
+
+            aliensCount--;
+            page.setAliensCount(aliensCount);
+            setCountButton(aliensCount);
+            
+            chrome.tabs.query({}, (tabs) => {
+                for (const tab of tabs) {
+                    chrome.tabs.sendMessage(tab.id, {
+                        type: 'dec',
+                        message: { aliensEnabled: aliensEnabled },
+                    });
+                }
+            });
+        });
+
+        $('#alienToggle').click(() => {
+            aliensEnabled = !aliensEnabled;
+            page.setAliensEnabled(aliensEnabled);
+            setEnableButton(aliensEnabled);
+            
+            chrome.tabs.query({}, (tabs) => {
+                for (const tab of tabs) {
+                    chrome.tabs.sendMessage(tab.id, {
+                        type: 'toggle',
+                        message: { aliensEnabled: aliensEnabled, aliensCount: aliensCount },
                     });
                 }
             });
